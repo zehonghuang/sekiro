@@ -18,7 +18,7 @@ public enum SekiroCommandCode implements CommandCode {
     }
 
     @Override
-    public int code() {
+    public short code() {
         return this.code;
     }
 

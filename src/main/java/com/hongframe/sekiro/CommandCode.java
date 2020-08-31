@@ -6,6 +6,6 @@ package com.hongframe.sekiro;
  */
 public interface CommandCode {
 
-    int code();
+    short code();
 
 }

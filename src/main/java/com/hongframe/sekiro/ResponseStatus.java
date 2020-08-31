@@ -16,4 +16,8 @@ public enum ResponseStatus {
     ResponseStatus(short status) {
         this.status = status;
     }
+
+    public short status() {
+        return status;
+    }
 }

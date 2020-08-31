@@ -37,7 +37,8 @@ import com.hongframe.sekiro.Protocol;
  */
 public class SekiroProtocol implements Protocol {
 
-    private final static byte SEKIRO_PROTOCOL = (byte) 1;
+    public final static byte SEKIRO_PROTOCOL_CODE = (byte) 1;
+    public final static byte SEKIRO_PROTOCOL_VERSION = (byte) 1;
 
     private CommandEncoder encoder;
     private CommandDecoder decoder;

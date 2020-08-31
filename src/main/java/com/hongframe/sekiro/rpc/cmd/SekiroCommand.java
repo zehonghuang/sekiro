@@ -12,11 +12,13 @@ import java.util.Objects;
  */
 public abstract class SekiroCommand implements RemotingCommand {
 
-    private CommandCode cmdCode;
-    private byte version;
     private byte type;
 
+    private CommandCode cmdCode;
+    private byte version = 0x1;
+
     private int requestId;
+    private byte serializer;// as codec
 
     private short clazzLength;
     private short headerLength;
@@ -32,17 +34,49 @@ public abstract class SekiroCommand implements RemotingCommand {
 
     @Override
     public ProtocolCode protoVersion() {
-        return null;
+        return null;//TODO
+    }
+
+    public void setCmdCode(CommandCode cmdCode) {
+        this.cmdCode = cmdCode;
     }
 
     @Override
     public CommandCode cmdCode() {
-        return null;
+        return this.cmdCode;
+    }
+
+    public byte getVersion() {
+        return version;
+    }
+
+    public void setVersion(byte version) {
+        this.version = version;
     }
 
     @Override
     public int requestId() {
-        return 0;
+        return this.requestId;
+    }
+
+    public byte getSerializer() {
+        return serializer;
+    }
+
+    public void setSerializer(byte serializer) {
+        this.serializer = serializer;
+    }
+
+    public short getClazzLength() {
+        return clazzLength;
+    }
+
+    public short getHeaderLength() {
+        return headerLength;
+    }
+
+    public int getContentLength() {
+        return contentLength;
     }
 
     public byte[] getClazz() {
