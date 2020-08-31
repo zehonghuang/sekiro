@@ -12,6 +12,7 @@ import java.util.List;
  */
 public class SekiroCommandDecoder implements CommandDecoder {
 
+    @Override
     public void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
 
     }

@@ -35,6 +35,7 @@ public class NamedThreadFactory implements ThreadFactory {
         this.daemon = daemon;
     }
 
+    @Override
     public Thread newThread(Runnable r) {
         Thread t = new Thread(r);
         t.setDaemon(this.daemon);
@@ -45,6 +46,7 @@ public class NamedThreadFactory implements ThreadFactory {
 
     private static final class LogUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
 
+        @Override
         public void uncaughtException(Thread t, Throwable e) {
             LOG.error("Uncaught exception in thread {}", t, e);
         }

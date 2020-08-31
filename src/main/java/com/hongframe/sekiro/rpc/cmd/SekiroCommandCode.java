@@ -1,4 +1,4 @@
-package com.hongframe.sekiro.rpc.protocol;
+package com.hongframe.sekiro.rpc.cmd;
 
 import com.hongframe.sekiro.CommandCode;
 
@@ -17,6 +17,7 @@ public enum SekiroCommandCode implements CommandCode {
         this.code = code;
     }
 
+    @Override
     public int code() {
         return this.code;
     }

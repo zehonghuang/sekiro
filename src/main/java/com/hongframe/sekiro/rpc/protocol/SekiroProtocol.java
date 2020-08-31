@@ -47,10 +47,12 @@ public class SekiroProtocol implements Protocol {
         this.decoder = new SekiroCommandDecoder();
     }
 
+    @Override
     public CommandEncoder encoder() {
         return this.encoder;
     }
 
+    @Override
     public CommandDecoder decoder() {
         return this.decoder;
     }
