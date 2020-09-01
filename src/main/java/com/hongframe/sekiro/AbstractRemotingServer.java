@@ -1,5 +1,7 @@
 package com.hongframe.sekiro;
 
+import com.hongframe.sekiro.config.UserConfig;
+
 /**
  * @author 墨声 E-mail: zehong.hongframe.huang@gmail.com
  * create time: 2020-08-30 21:23
@@ -17,19 +19,23 @@ public abstract class AbstractRemotingServer extends AbstractLifeCycle implement
     public void startup() {
         super.startup();
 
-        init();
+        init(config());
     }
 
-    protected abstract void init();
+    protected abstract UserConfig config();
+
+    protected abstract void init(UserConfig config);
 
     protected abstract void start();
 
     protected abstract void stop0();
 
+    @Override
     public String ip() {
         return this.ip;
     }
 
+    @Override
     public int port() {
         return this.port;
     }

@@ -1,6 +1,11 @@
 package com.hongframe.sekiro.rpc;
 
+import com.hongframe.sekiro.ProtocolCode;
 import com.hongframe.sekiro.codec.Codec;
+import com.hongframe.sekiro.codec.ProtocolCodeBasedDecoder;
+import com.hongframe.sekiro.codec.ProtocolCodeBasedEncoder;
+import com.hongframe.sekiro.rpc.protocol.SekiroProtocol;
+import com.hongframe.sekiro.rpc.protocol.SekiroProtocolManager;
 import io.netty.channel.ChannelHandler;
 
 /**
@@ -8,13 +13,18 @@ import io.netty.channel.ChannelHandler;
  * create time: 2020-08-30 23:55
  */
 public class SekiroCodec implements Codec {
+
+    static {
+        SekiroProtocolManager.initProtocols();
+    }
+
     @Override
     public ChannelHandler encoder() {
-        return null;
+        return new ProtocolCodeBasedEncoder(ProtocolCode.fromBytes(SekiroProtocol.SEKIRO_PROTOCOL_CODE));
     }
 
     @Override
     public ChannelHandler decoder() {
-        return null;
+        return new ProtocolCodeBasedDecoder(ProtocolCodeBasedDecoder.DEFAULT_PROTOCOL_VERSION_LENGTH);
     }
 }

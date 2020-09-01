@@ -40,6 +40,9 @@ public class SekiroProtocol implements Protocol {
     public final static byte SEKIRO_PROTOCOL_CODE = (byte) 1;
     public final static byte SEKIRO_PROTOCOL_VERSION = (byte) 1;
 
+    public final static byte REQUEST_HEADER_LENGTH = 24;
+    public final static byte RESPONSE_HEADER_LENGTH = 22;
+
     private CommandEncoder encoder;
     private CommandDecoder decoder;
 

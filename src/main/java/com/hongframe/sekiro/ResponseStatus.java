@@ -20,4 +20,14 @@ public enum ResponseStatus {
     public short status() {
         return status;
     }
+
+    public static ResponseStatus valueOf(short value) {
+        switch (value) {
+            case 0x0000:
+                return SUCCESS;
+            case 0x0001:
+                return ERROR;
+        }
+        throw new IllegalArgumentException("Unknown status value ," + value);
+    }
 }

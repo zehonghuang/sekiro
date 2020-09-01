@@ -10,13 +10,13 @@ public class ProtocolCode {
 
     private byte[] version;
 
-    public ProtocolCode(byte... version) {
-        this.version = version;
+    public ProtocolCode(byte... code) {
+        this.version = code;
     }
 
 
-    public static ProtocolCode fromBytes(byte... version) {
-        return new ProtocolCode(version);
+    public static ProtocolCode fromBytes(byte... code) {
+        return new ProtocolCode(code);
     }
 
 

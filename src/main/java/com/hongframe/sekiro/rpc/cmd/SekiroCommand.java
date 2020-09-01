@@ -59,6 +59,10 @@ public abstract class SekiroCommand implements RemotingCommand {
         return this.requestId;
     }
 
+    public void setRequestId(int requestId) {
+        this.requestId = requestId;
+    }
+
     public byte getSerializer() {
         return serializer;
     }

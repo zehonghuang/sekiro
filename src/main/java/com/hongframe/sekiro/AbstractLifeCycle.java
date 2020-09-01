@@ -10,6 +10,7 @@ public abstract class AbstractLifeCycle implements LifeCycle {
 
     private AtomicBoolean isStartup = new AtomicBoolean(false);
 
+    @Override
     public void startup() {
         if(isStartup.compareAndSet(false, true)) {
             return;
@@ -17,6 +18,7 @@ public abstract class AbstractLifeCycle implements LifeCycle {
         throw new LifeCycleException("Started!!!");
     }
 
+    @Override
     public boolean isStarted() {
         return this.isStartup.get();
     }
