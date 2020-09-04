@@ -10,6 +10,10 @@ import java.net.InetSocketAddress;
  */
 public class SekiroResponseCommand extends SekiroCommand {
 
+    private Object response;
+
+    private String responseClass;
+
     private ResponseStatus status;
 
     private long responseTimeMillis;
@@ -18,8 +22,21 @@ public class SekiroResponseCommand extends SekiroCommand {
 
     private Throwable cause;
 
+    public SekiroResponseCommand(Object response) {
+        super(SekiroCommandType.RESPONSE);
+        this.response = response;
+    }
+
     public SekiroResponseCommand() {
         super(SekiroCommandType.RESPONSE);
+    }
+
+    public Object getResponse() {
+        return response;
+    }
+
+    public void setResponse(Object response) {
+        this.response = response;
     }
 
     public ResponseStatus getStatus() {
@@ -52,5 +69,15 @@ public class SekiroResponseCommand extends SekiroCommand {
 
     public void setCause(Throwable cause) {
         this.cause = cause;
+    }
+
+    @Override
+    public void serialize() {
+
+    }
+
+    @Override
+    public void deserialize() {
+
     }
 }

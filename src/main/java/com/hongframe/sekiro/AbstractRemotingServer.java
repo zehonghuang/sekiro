@@ -1,6 +1,10 @@
 package com.hongframe.sekiro;
 
 import com.hongframe.sekiro.config.UserConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.InetSocketAddress;
 
 /**
  * @author 墨声 E-mail: zehong.hongframe.huang@gmail.com
@@ -8,25 +12,43 @@ import com.hongframe.sekiro.config.UserConfig;
  */
 public abstract class AbstractRemotingServer extends AbstractLifeCycle implements RemotingServer {
 
+    private static final Logger logger = LoggerFactory.getLogger(AbstractRemotingServer.class);
+
     private String ip;
     private int port;
 
-    public AbstractRemotingServer(String ip) {
+    public AbstractRemotingServer(int port) {
+        this(new InetSocketAddress(port).getAddress().getHostAddress(), port);
+    }
+
+    public AbstractRemotingServer(String ip, int port) {
         this.ip = ip;
+        this.port = port;
     }
 
     @Override
     public void startup() {
         super.startup();
 
-        init(config());
+        try {
+            init(config());
+            if(start()) {
+                logger.warn("Server started on port {}", port);
+            } else {
+                logger.warn("Failed starting server on port {}", port);
+                throw new LifeCycleException("Failed starting server on port: " + port);
+            }
+        } catch (Throwable e) {
+            this.shutdown();
+            throw new IllegalStateException("ERROR: Failed to start the Server!", e);
+        }
     }
 
     protected abstract UserConfig config();
 
     protected abstract void init(UserConfig config);
 
-    protected abstract void start();
+    protected abstract boolean start() throws InterruptedException;
 
     protected abstract void stop0();
 

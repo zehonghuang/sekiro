@@ -19,6 +19,14 @@ public abstract class AbstractLifeCycle implements LifeCycle {
     }
 
     @Override
+    public void shutdown() throws LifeCycleException {
+        if (isStartup.compareAndSet(true, false)) {
+            return;
+        }
+        throw new LifeCycleException("this component has closed");
+    }
+
+    @Override
     public boolean isStarted() {
         return this.isStartup.get();
     }

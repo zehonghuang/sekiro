@@ -10,4 +10,6 @@ public interface Protocol {
 
     CommandDecoder decoder();
 
+    CommandHandler commandHander();
+
 }

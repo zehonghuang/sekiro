@@ -2,7 +2,9 @@ package com.hongframe.sekiro.rpc.protocol;
 
 import com.hongframe.sekiro.CommandDecoder;
 import com.hongframe.sekiro.CommandEncoder;
+import com.hongframe.sekiro.CommandHandler;
 import com.hongframe.sekiro.Protocol;
+import com.hongframe.sekiro.rpc.SekiroCommandHandler;
 
 /**
  *
@@ -45,10 +47,12 @@ public class SekiroProtocol implements Protocol {
 
     private CommandEncoder encoder;
     private CommandDecoder decoder;
+    private CommandHandler handler;
 
     public SekiroProtocol() {
         this.encoder = new SekiroCommandEncoder();
         this.decoder = new SekiroCommandDecoder();
+        this.handler = new SekiroCommandHandler();
     }
 
     @Override
@@ -59,5 +63,10 @@ public class SekiroProtocol implements Protocol {
     @Override
     public CommandDecoder decoder() {
         return this.decoder;
+    }
+
+    @Override
+    public CommandHandler commandHander() {
+        return this.handler;
     }
 }

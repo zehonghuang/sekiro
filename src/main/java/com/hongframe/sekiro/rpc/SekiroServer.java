@@ -3,14 +3,19 @@ package com.hongframe.sekiro.rpc;
 import com.hongframe.sekiro.AbstractRemotingServer;
 import com.hongframe.sekiro.codec.Codec;
 import com.hongframe.sekiro.config.UserConfig;
+import com.hongframe.sekiro.rpc.protocol.UserTube;
 import com.hongframe.sekiro.utils.NamedThreadFactory;
 import com.hongframe.sekiro.utils.NettyUtil;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
+import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.buffer.UnpooledByteBufAllocator;
+import io.netty.channel.*;
 import io.netty.channel.socket.SocketChannel;
+import org.apache.commons.lang3.StringUtils;
+
+import java.net.InetSocketAddress;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author 墨声 E-mail: zehong.hongframe.huang@gmail.com
@@ -20,7 +25,13 @@ public class SekiroServer extends AbstractRemotingServer {
 
     private ServerBootstrap bootstrap;
 
+    private ChannelFuture channelFuture;
+
     private UserConfig config;
+
+    private ConcurrentHashMap<String, UserTube<?>> userTubes =
+            new ConcurrentHashMap<String, UserTube<?>>(4);
+
 
     private EventLoopGroup bossGroup = NettyUtil
             .newEventLoopGroup(
@@ -38,22 +49,38 @@ public class SekiroServer extends AbstractRemotingServer {
 
     private final Codec codec = new SekiroCodec();
 
-    public SekiroServer(String ip) {
-        super(ip);
+    public SekiroServer(int port) {
+        super(port);
+    }
+
+    public SekiroServer(String ip, int port) {
+        super(ip, port);
     }
 
     @Override
     protected void init(UserConfig config) {
 
+        this.config = config;
+
         this.bootstrap = new ServerBootstrap();
         this.bootstrap.group(this.bossGroup, this.workGroup)
                 .channel(NettyUtil.getServerSocketChannelClass())
-                .option(ChannelOption.SO_BACKLOG, 1024)
-                .option(ChannelOption.SO_REUSEADDR, true)
-                .option(ChannelOption.TCP_NODELAY, true)
-                .option(ChannelOption.SO_KEEPALIVE, true)
-                .option(ChannelOption.SO_SNDBUF, null)
-                .option(ChannelOption.SO_RCVBUF, null);
+                .option(ChannelOption.SO_BACKLOG, this.config.getTcp_so_backlog())
+                .option(ChannelOption.SO_REUSEADDR, this.config.isTcp_so_reuseaddr())
+
+                .childOption(ChannelOption.TCP_NODELAY, this.config.isTcp_nodelay())
+                .childOption(ChannelOption.SO_KEEPALIVE, this.config.getTcp_so_keepalive())
+                .childOption(ChannelOption.SO_SNDBUF, this.config.getTcp_so_sndbuf())
+                .childOption(ChannelOption.SO_RCVBUF, this.config.getTcp_so_rcvbuf());
+
+        if (this.config.getNetty_buffer_pooled()) {
+            this.bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
+                    .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+        } else {
+            this.bootstrap.option(ChannelOption.ALLOCATOR, UnpooledByteBufAllocator.DEFAULT)
+                    .childOption(ChannelOption.ALLOCATOR, UnpooledByteBufAllocator.DEFAULT);
+
+        }
 
         SekiroHandler sekiro = new SekiroHandler();
 
@@ -71,7 +98,7 @@ public class SekiroServer extends AbstractRemotingServer {
 
     }
 
-    protected void setConfig(UserConfig config) {
+    public void setConfig(UserConfig config) {
         this.config = config;
     }
 
@@ -81,8 +108,9 @@ public class SekiroServer extends AbstractRemotingServer {
     }
 
     @Override
-    protected void start() {
-
+    protected boolean start()throws InterruptedException {
+        this.channelFuture = this.bootstrap.bind(new InetSocketAddress(ip(), port())).sync();
+        return this.channelFuture.isSuccess();
     }
 
     @Override
@@ -93,5 +121,19 @@ public class SekiroServer extends AbstractRemotingServer {
     @Override
     public void shutdown() {
 
+    }
+
+    @Override
+    public void registerUserTube(UserTube<?> tube) {
+        if (Objects.isNull(tube)) {
+            throw new RuntimeException("user tube should not be null!");
+        }
+        if (StringUtils.isBlank(tube.identity())) {
+            throw new RuntimeException("identity should not be blank!");
+        }
+        UserTube userTube = this.userTubes.putIfAbsent(tube.identity(), tube);
+        if (Objects.nonNull(userTube)) {
+            throw new RuntimeException("can not register again!");
+        }
     }
 }

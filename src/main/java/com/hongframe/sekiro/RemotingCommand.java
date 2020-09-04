@@ -14,4 +14,8 @@ public interface RemotingCommand extends Serializable {
 
     int requestId();
 
+    void serialize();
+
+    void deserialize();
+
 }
